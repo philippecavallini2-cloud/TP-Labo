@@ -41,7 +41,7 @@
       border: 1px solid #cbd5e1;
       border-left: 5px solid #0f4c81;
       padding: 15px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       border-radius: 8px;
       transition: transform 0.15s, background 0.15s;
     }
@@ -61,6 +61,26 @@
       margin-top: 4px;
       display: block;
     }
+    .video-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 5px solid #059669;
+      padding: 15px;
+      margin-bottom: 14px;
+      border-radius: 8px;
+    }
+    .video-title {
+      font-weight: 600;
+      color: #059669;
+      font-size: 1.05rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+    video {
+      width: 100%;
+      border-radius: 6px;
+      background: #000;
+    }
     footer {
       margin-top: 25px;
       text-align: center;
@@ -72,20 +92,28 @@
 <body>
   <div class="container">
     <h1>🧪 Ressources Pédagogiques – Labo</h1>
-    <p class="subtitle">Supports de TP, fiches méthodes et démonstrations vidéo.</p>
+    <p class="subtitle">2nde Pro TPR – Travaux Pratiques de Physique-Chimie.</p>
 
-    <!-- RESSOURCE 1 -->
+    <!-- VIDÉO MP4 INTÉGRÉE -->
+    <div class="video-box">
+      <span class="video-title">🎬 Teaser : L'IA l'a imaginé, NOUS l'avons fait !</span>
+      <video controls playsinline preload="metadata">
+        <source src="Teaser_TagsIA.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la lecture vidéo.
+      </video>
+    </div>
+
+    <!-- AFFICHE PDF -->
+    <a class="card" href="Affiche%20%E2%80%93%20L'IA%20l'a%20imagin%C3%A9%2C%20NOUS%20l'avons%20fait.pdf" target="_blank">
+      <span class="card-title">📄 Affiche – L'IA l'a imaginé, NOUS l'avons fait !</span>
+      <span class="card-desc">Télécharger ou imprimer l'affiche complète (PDF)</span>
+    </a>
+
+    <!-- AFFICHE IMAGE PNG -->
     <a class="card" href="Affiche%20Tags%20IA.png" target="_blank">
       <span class="card-title">🖼️ Affiche Tags IA</span>
-      <span class="card-desc">Support visuel (Format image)</span>
+      <span class="card-desc">Version image haute définition (PNG)</span>
     </a>
-
-    <!-- MODÈLE POUR AJOUTER UNE NOUVELLE RESSOURCE (Copier-coller ce bloc) :
-    <a class="card" href="nom-du-fichier.pdf" target="_blank">
-      <span class="card-title">📄 Titre du TP ou de la fiche</span>
-      <span class="card-desc">Description courte (PDF / Vidéo MP4)</span>
-    </a>
-    -->
 
     <footer>
       Conception : Philippe Cavallini – Usage pédagogique
