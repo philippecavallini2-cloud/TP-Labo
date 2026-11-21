@@ -114,12 +114,6 @@
       border-radius: 6px;
       background: #000;
     }
-    #loading {
-      text-align: center;
-      color: #64748b;
-      padding: 20px;
-      font-style: italic;
-    }
     footer {
       margin-top: 25px;
       text-align: center;
@@ -133,94 +127,56 @@
     <h1>🧪 Ressources Pédagogiques – Labo</h1>
     <p class="subtitle">Supports de TP, affiches et démonstrations vidéo.</p>
 
-    <div id="loading">Chargement des ressources...</div>
-    <div id="liste-ressources"></div>
+    <!-- DOSSIER 1 : 2NDE PRO LABORATOIRES -->
+    <details class="folder" open>
+      <summary>📁 2nde Pro Laboratoires</summary>
+      <div class="folder-content">
+
+        <div class="video-box">
+          <span class="video-title">🎬 Teaser TP Cuivre</span>
+          <video controls playsinline preload="metadata">
+            <source src="2nde%20Pro%20Laboratoires/Teaser_TPcuivre.mp4" type="video/mp4">
+            Votre navigateur ne supporte pas la lecture vidéo.
+          </video>
+        </div>
+
+        <a class="card" href="2nde%20Pro%20Laboratoires/Affiche_TP_cuivre.jpg" target="_blank">
+          <span class="card-title">🖼️ Affiche TP Cuivre</span>
+          <span class="card-desc">Support visuel haute définition (JPG)</span>
+        </a>
+
+      </div>
+    </details>
+
+    <!-- RESSOURCES GÉNÉRALES (RACINE) -->
+    <details class="folder" open>
+      <summary>📁 Affiches & Projets Labo</summary>
+      <div class="folder-content">
+
+        <div class="video-box">
+          <span class="video-title">🎬 Teaser : L'IA l'a imaginé, NOUS l'avons fait !</span>
+          <video controls playsinline preload="metadata">
+            <source src="Teaser_TagsIA.mp4" type="video/mp4">
+            Votre navigateur ne supporte pas la lecture vidéo.
+          </video>
+        </div>
+
+        <a class="card" href="Affiche%20%E2%80%93%20L'IA%20l'a%20imagin%C3%A9%2C%20NOUS%20l'avons%20fait.pdf" target="_blank">
+          <span class="card-title">📄 Affiche – L'IA l'a imaginé, NOUS l'avons fait !</span>
+          <span class="card-desc">Télécharger ou imprimer l'affiche (PDF)</span>
+        </a>
+
+        <a class="card" href="Affiche%20Tags%20IA.png" target="_blank">
+          <span class="card-title">🖼️ Affiche Tags IA</span>
+          <span class="card-desc">Version image haute définition (PNG)</span>
+        </a>
+
+      </div>
+    </details>
 
     <footer>
       Conception : Philippe Cavallini – Usage pédagogique
     </footer>
   </div>
-
-  <script>
-    const utilisateur = "philippecavallini2-cloud";
-    const depot = "TP-Labo";
-    const urlBase = `https://github.com{utilisateur}/${depot}/contents/`;
-
-    function creerCarteFichier(fichier, cheminDossier = "") {
-      const nom = fichier.name;
-      if (nom === "index.html" || nom.startsWith(".")) return "";
-
-      const ext = nom.split('.').pop().toLowerCase();
-      const titrePropre = nom.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
-      const cheminComplet = cheminDossier
-        ? `${encodeURIComponent(cheminDossier)}/${encodeURIComponent(nom)}`
-        : encodeURIComponent(nom);
-
-      if (ext === "mp4" || ext === "webm") {
-        return `
-          <div class="video-box">
-            <span class="video-title">🎬 ${titrePropre}</span>
-            <video controls playsinline preload="metadata">
-              <source src="${cheminComplet}" type="video/${ext}">
-              Votre navigateur ne supporte pas la lecture vidéo.
-            </video>
-          </div>`;
-      } else if (ext === "pdf") {
-        return `
-          <a class="card" href="${cheminComplet}" target="_blank">
-            <span class="card-title">📄 ${titrePropre}</span>
-            <span class="card-desc">Document PDF à consulter ou télécharger</span>
-          </a>`;
-      } else if (["png", "jpg", "jpeg", "gif", "webp"].includes(ext)) {
-        return `
-          <a class="card" href="${cheminComplet}" target="_blank">
-            <span class="card-title">🖼️ ${titrePropre}</span>
-            <span class="card-desc">Affiche / Image haute définition (${ext.toUpperCase()})</span>
-          </a>`;
-      }
-      return "";
-    }
-
-    async function chargerContenu() {
-      const conteneur = document.getElementById("liste-ressources");
-      try {
-        const rep = await fetch(urlBase);
-        const elements = await rep.json();
-        document.getElementById("loading").style.display = "none";
-
-        // 1. Affiche d'abord les dossiers sous forme de menus dépliables
-        const dossiers = elements.filter(el => el.type === "dir" && !el.name.startsWith("."));
-        for (const dossier of dossiers) {
-          const repDossier = await fetch(dossier.url);
-          const fichiersDossier = await repDossier.json();
-          const titreDossier = dossier.name.replace(/[_-]/g, " ");
-
-          let htmlFichiers = "";
-          fichiersDossier.forEach(f => {
-            if (f.type === "file") htmlFichiers += creerCarteFichier(f, dossier.name);
-          });
-
-          if (htmlFichiers) {
-            conteneur.innerHTML += `
-              <details class="folder" open>
-                <summary>📁 ${titreDossier}</summary>
-                <div class="folder-content">${htmlFichiers}</div>
-              </details>`;
-          }
-        }
-
-        // 2. Affiche ensuite les fichiers restés à la racine
-        elements.forEach(el => {
-          if (el.type === "file") {
-            conteneur.innerHTML += creerCarteFichier(el);
-          }
-        });
-      } catch (e) {
-        document.getElementById("loading").innerText = "Impossible de charger les dossiers.";
-      }
-    }
-
-    chargerContenu();
-  </script>
 </body>
 </html>
