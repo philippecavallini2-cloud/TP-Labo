@@ -38,12 +38,12 @@
       background: #f1f5f9;
       border: 1px solid #cbd5e1;
       border-radius: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       padding: 12px 15px;
     }
     details.folder summary {
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: #0f4c81;
       cursor: pointer;
       list-style: none;
@@ -56,7 +56,7 @@
     }
     details.folder summary::after {
       content: "▼";
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       transition: transform 0.2s;
     }
     details.folder[open] summary::after {
@@ -114,6 +114,12 @@
       border-radius: 6px;
       background: #000;
     }
+    #loading {
+      text-align: center;
+      color: #64748b;
+      padding: 15px;
+      font-style: italic;
+    }
     footer {
       margin-top: 25px;
       text-align: center;
@@ -127,56 +133,117 @@
     <h1>🧪 Ressources Pédagogiques – Labo</h1>
     <p class="subtitle">Supports de TP, affiches et démonstrations vidéo.</p>
 
-    <!-- DOSSIER 1 : 2NDE PRO LABORATOIRES -->
-    <details class="folder" open>
-      <summary>📁 2nde Pro Laboratoires</summary>
-      <div class="folder-content">
-
-        <div class="video-box">
-          <span class="video-title">🎬 Teaser TP Cuivre</span>
-          <video controls playsinline preload="metadata">
-            <source src="2nde%20Pro%20Laboratoires/Teaser_TPcuivre.mp4" type="video/mp4">
-            Votre navigateur ne supporte pas la lecture vidéo.
-          </video>
-        </div>
-
-        <a class="card" href="2nde%20Pro%20Laboratoires/Affiche_TP_cuivre.jpg" target="_blank">
-          <span class="card-title">🖼️ Affiche TP Cuivre</span>
-          <span class="card-desc">Support visuel haute définition (JPG)</span>
-        </a>
-
-      </div>
-    </details>
-
-    <!-- RESSOURCES GÉNÉRALES (RACINE) -->
-    <details class="folder" open>
-      <summary>📁 Affiches & Projets Labo</summary>
-      <div class="folder-content">
-
-        <div class="video-box">
-          <span class="video-title">🎬 Teaser : L'IA l'a imaginé, NOUS l'avons fait !</span>
-          <video controls playsinline preload="metadata">
-            <source src="Teaser_TagsIA.mp4" type="video/mp4">
-            Votre navigateur ne supporte pas la lecture vidéo.
-          </video>
-        </div>
-
-        <a class="card" href="Affiche%20%E2%80%93%20L'IA%20l'a%20imagin%C3%A9%2C%20NOUS%20l'avons%20fait.pdf" target="_blank">
-          <span class="card-title">📄 Affiche – L'IA l'a imaginé, NOUS l'avons fait !</span>
-          <span class="card-desc">Télécharger ou imprimer l'affiche (PDF)</span>
-        </a>
-
-        <a class="card" href="Affiche%20Tags%20IA.png" target="_blank">
-          <span class="card-title">🖼️ Affiche Tags IA</span>
-          <span class="card-desc">Version image haute définition (PNG)</span>
-        </a>
-
-      </div>
-    </details>
+    <div id="loading">Chargement des dossiers...</div>
+    <div id="liste-ressources"></div>
 
     <footer>
       Conception : Philippe Cavallini – Usage pédagogique
     </footer>
   </div>
+
+  <script>
+    const utilisateur = "philippecavallini2-cloud";
+    const depot = "TP-Labo";
+    const urlArbre = `https://github.com{utilisateur}/${depot}/git/trees/main?recursive=1`;
+
+    function creerCarte(cheminComplet, nomFichier) {
+      if (nomFichier === "index.html" || nomFichier.startsWith(".")) return "";
+      const ext = nomFichier.split('.').pop().toLowerCase();
+      const titrePropre = nomFichier.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
+      const urlEncodee = cheminComplet.split('/').map(encodeURIComponent).join('/');
+
+      if (ext === "mp4" || ext === "webm") {
+        return `
+          <div class="video-box">
+            <span class="video-title">🎬 ${titrePropre}</span>
+            <video controls playsinline preload="metadata">
+              <source src="${urlEncodee}" type="video/${ext}">
+              Votre navigateur ne supporte pas la lecture vidéo.
+            </video>
+          </div>`;
+      } else if (ext === "pdf") {
+        return `
+          <a class="card" href="${urlEncodee}" target="_blank">
+            <span class="card-title">📄 ${titrePropre}</span>
+            <span class="card-desc">Document PDF à consulter ou télécharger</span>
+          </a>`;
+      } else if (["png", "jpg", "jpeg", "gif", "webp"].includes(ext)) {
+        return `
+          <a class="card" href="${urlEncodee}" target="_blank">
+            <span class="card-title">🖼️ ${titrePropre}</span>
+            <span class="card-desc">Affiche / Image haute définition (${ext.toUpperCase()})</span>
+          </a>`;
+      }
+      return "";
+    }
+
+    async function afficherPortail() {
+      const conteneur = document.getElementById("liste-ressources");
+      try {
+        let donnees;
+        const cache = sessionStorage.getItem("github_tree_cache");
+        if (cache) {
+          donnees = JSON.parse(cache);
+        } else {
+          const rep = await fetch(urlArbre);
+          if (!rep.ok) throw new Error("Erreur réseau");
+          donnees = await rep.json();
+          sessionStorage.setItem("github_tree_cache", JSON.stringify(donnees));
+        }
+
+        document.getElementById("loading").style.display = "none";
+
+        const dossiers = {};
+        const racine = [];
+
+        donnees.tree.forEach(item => {
+          if (item.type !== "blob") return;
+          const parties = item.path.split('/');
+          if (parties.length > 1) {
+            const nomDossier = parties[0];
+            const nomFichier = parties[parties.length - 1];
+            if (!dossiers[nomDossier]) dossiers[nomDossier] = [];
+            dossiers[nomDossier].push({ path: item.path, name: nomFichier });
+          } else {
+            racine.push({ path: item.path, name: item.path });
+          }
+        });
+
+        // 1. Affiche automatiquement chaque dossier créé sur GitHub
+        Object.keys(dossiers).sort().forEach(nomDossier => {
+          let htmlDossier = "";
+          dossiers[nomDossier].forEach(f => {
+            htmlDossier += creerCarte(f.path, f.name);
+          });
+          if (htmlDossier) {
+            const titreDossier = nomDossier.replace(/[_-]/g, " ");
+            conteneur.innerHTML += `
+              <details class="folder">
+                <summary>📁 ${titreDossier}</summary>
+                <div class="folder-content">${htmlDossier}</div>
+              </details>`;
+          }
+        });
+
+        // 2. Regroupe les fichiers restés à la racine dans un dossier général
+        let htmlRacine = "";
+        racine.forEach(f => {
+          htmlRacine += creerCarte(f.path, f.name);
+        });
+        if (htmlRacine) {
+          conteneur.innerHTML += `
+            <details class="folder">
+              <summary>📁 Affiches & Projets Labo</summary>
+              <div class="folder-content">${htmlRacine}</div>
+            </details>`;
+        }
+
+      } catch (e) {
+        document.getElementById("loading").innerText = "Actualisez la page dans quelques instants.";
+      }
+    }
+
+    afficherPortail();
+  </script>
 </body>
 </html>
