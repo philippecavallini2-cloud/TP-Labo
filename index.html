@@ -34,14 +34,45 @@
       color: #4b5563;
       margin-bottom: 20px;
     }
+    details.folder {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      padding: 12px 15px;
+    }
+    details.folder summary {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #0f4c81;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    details.folder summary::-webkit-details-marker {
+      display: none;
+    }
+    details.folder summary::after {
+      content: "▼";
+      font-size: 0.8rem;
+      transition: transform 0.2s;
+    }
+    details.folder[open] summary::after {
+      transform: rotate(180deg);
+    }
+    .folder-content {
+      margin-top: 14px;
+    }
     .card {
       display: block;
       text-decoration: none;
-      background: #f8fafc;
+      background: #ffffff;
       border: 1px solid #cbd5e1;
       border-left: 5px solid #0f4c81;
-      padding: 15px;
-      margin-bottom: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
       border-radius: 8px;
       transition: transform 0.15s, background 0.15s;
     }
@@ -52,7 +83,7 @@
     .card-title {
       font-weight: 600;
       color: #0f4c81;
-      font-size: 1.05rem;
+      font-size: 1rem;
       display: block;
       word-break: break-word;
     }
@@ -63,17 +94,17 @@
       display: block;
     }
     .video-box {
-      background: #f8fafc;
+      background: #ffffff;
       border: 1px solid #cbd5e1;
       border-left: 5px solid #059669;
-      padding: 15px;
-      margin-bottom: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
       border-radius: 8px;
     }
     .video-title {
       font-weight: 600;
       color: #059669;
-      font-size: 1.05rem;
+      font-size: 1rem;
       display: block;
       margin-bottom: 10px;
       word-break: break-word;
@@ -113,54 +144,83 @@
   <script>
     const utilisateur = "philippecavallini2-cloud";
     const depot = "TP-Labo";
-    const urlApi = `https://github.com{utilisateur}/${depot}/contents/`;
+    const urlBase = `https://github.com{utilisateur}/${depot}/contents/`;
 
-    fetch(urlApi)
-      .then(reponse => reponse.json())
-      .then(fichiers => {
-        const conteneur = document.getElementById("liste-ressources");
+    function creerCarteFichier(fichier, cheminDossier = "") {
+      const nom = fichier.name;
+      if (nom === "index.html" || nom.startsWith(".")) return "";
+
+      const ext = nom.split('.').pop().toLowerCase();
+      const titrePropre = nom.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
+      const cheminComplet = cheminDossier
+        ? `${encodeURIComponent(cheminDossier)}/${encodeURIComponent(nom)}`
+        : encodeURIComponent(nom);
+
+      if (ext === "mp4" || ext === "webm") {
+        return `
+          <div class="video-box">
+            <span class="video-title">🎬 ${titrePropre}</span>
+            <video controls playsinline preload="metadata">
+              <source src="${cheminComplet}" type="video/${ext}">
+              Votre navigateur ne supporte pas la lecture vidéo.
+            </video>
+          </div>`;
+      } else if (ext === "pdf") {
+        return `
+          <a class="card" href="${cheminComplet}" target="_blank">
+            <span class="card-title">📄 ${titrePropre}</span>
+            <span class="card-desc">Document PDF à consulter ou télécharger</span>
+          </a>`;
+      } else if (["png", "jpg", "jpeg", "gif", "webp"].includes(ext)) {
+        return `
+          <a class="card" href="${cheminComplet}" target="_blank">
+            <span class="card-title">🖼️ ${titrePropre}</span>
+            <span class="card-desc">Affiche / Image haute définition (${ext.toUpperCase()})</span>
+          </a>`;
+      }
+      return "";
+    }
+
+    async function chargerContenu() {
+      const conteneur = document.getElementById("liste-ressources");
+      try {
+        const rep = await fetch(urlBase);
+        const elements = await rep.json();
         document.getElementById("loading").style.display = "none";
 
-        fichiers.forEach(fichier => {
-          const nom = fichier.name;
-          // Ignore les fichiers système et index.html
-          if (nom === "index.html" || nom.startsWith(".") || fichier.type !== "file") return;
+        // 1. Affiche d'abord les dossiers sous forme de menus dépliables
+        const dossiers = elements.filter(el => el.type === "dir" && !el.name.startsWith("."));
+        for (const dossier of dossiers) {
+          const repDossier = await fetch(dossier.url);
+          const fichiersDossier = await repDossier.json();
+          const titreDossier = dossier.name.replace(/[_-]/g, " ");
 
-          const ext = nom.split('.').pop().toLowerCase();
-          // Nettoie le nom pour un affichage propre (enlève l'extension et remplace _ ou - par des espaces)
-          const titrePropre = nom.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
-          const lienEncode = encodeURIComponent(nom);
+          let htmlFichiers = "";
+          fichiersDossier.forEach(f => {
+            if (f.type === "file") htmlFichiers += creerCarteFichier(f, dossier.name);
+          });
 
-          if (ext === "mp4" || ext === "webm") {
+          if (htmlFichiers) {
             conteneur.innerHTML += `
-              <div class="video-box">
-                <span class="video-title">🎬 ${titrePropre}</span>
-                <video controls playsinline preload="metadata">
-                  <source src="${lienEncode}" type="video/${ext}">
-                  Votre navigateur ne supporte pas la lecture vidéo.
-                </video>
-              </div>
-            `;
-          } else if (ext === "pdf") {
-            conteneur.innerHTML += `
-              <a class="card" href="${lienEncode}" target="_blank">
-                <span class="card-title">📄 ${titrePropre}</span>
-                <span class="card-desc">Document PDF à consulter ou télécharger</span>
-              </a>
-            `;
-          } else if (["png", "jpg", "jpeg", "gif", "webp"].includes(ext)) {
-            conteneur.innerHTML += `
-              <a class="card" href="${lienEncode}" target="_blank">
-                <span class="card-title">🖼️ ${titrePropre}</span>
-                <span class="card-desc">Affiche / Image haute définition (${ext.toUpperCase()})</span>
-              </a>
-            `;
+              <details class="folder" open>
+                <summary>📁 ${titreDossier}</summary>
+                <div class="folder-content">${htmlFichiers}</div>
+              </details>`;
+          }
+        }
+
+        // 2. Affiche ensuite les fichiers restés à la racine
+        elements.forEach(el => {
+          if (el.type === "file") {
+            conteneur.innerHTML += creerCarteFichier(el);
           }
         });
-      })
-      .catch(erreur => {
-        document.getElementById("loading").innerText = "Impossible de charger la liste automatiquement.";
-      });
+      } catch (e) {
+        document.getElementById("loading").innerText = "Impossible de charger les dossiers.";
+      }
+    }
+
+    chargerContenu();
   </script>
 </body>
 </html>
