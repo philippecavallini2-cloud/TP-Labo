@@ -54,6 +54,7 @@
       color: #0f4c81;
       font-size: 1.05rem;
       display: block;
+      word-break: break-word;
     }
     .card-desc {
       font-size: 0.85rem;
@@ -75,11 +76,18 @@
       font-size: 1.05rem;
       display: block;
       margin-bottom: 10px;
+      word-break: break-word;
     }
     video {
       width: 100%;
       border-radius: 6px;
       background: #000;
+    }
+    #loading {
+      text-align: center;
+      color: #64748b;
+      padding: 20px;
+      font-style: italic;
     }
     footer {
       margin-top: 25px;
@@ -92,32 +100,67 @@
 <body>
   <div class="container">
     <h1>🧪 Ressources Pédagogiques – Labo</h1>
-    <p class="subtitle">2nde Pro TPR – Travaux Pratiques de Physique-Chimie.</p>
+    <p class="subtitle">Supports de TP, affiches et démonstrations vidéo.</p>
 
-    <!-- VIDÉO MP4 INTÉGRÉE -->
-    <div class="video-box">
-      <span class="video-title">🎬 Teaser : L'IA l'a imaginé, NOUS l'avons fait !</span>
-      <video controls playsinline preload="metadata">
-        <source src="Teaser_TagsIA.mp4" type="video/mp4">
-        Votre navigateur ne supporte pas la lecture vidéo.
-      </video>
-    </div>
-
-    <!-- AFFICHE PDF -->
-    <a class="card" href="Affiche%20%E2%80%93%20L'IA%20l'a%20imagin%C3%A9%2C%20NOUS%20l'avons%20fait.pdf" target="_blank">
-      <span class="card-title">📄 Affiche – L'IA l'a imaginé, NOUS l'avons fait !</span>
-      <span class="card-desc">Télécharger ou imprimer l'affiche complète (PDF)</span>
-    </a>
-
-    <!-- AFFICHE IMAGE PNG -->
-    <a class="card" href="Affiche%20Tags%20IA.png" target="_blank">
-      <span class="card-title">🖼️ Affiche Tags IA</span>
-      <span class="card-desc">Version image haute définition (PNG)</span>
-    </a>
+    <div id="loading">Chargement des ressources...</div>
+    <div id="liste-ressources"></div>
 
     <footer>
       Conception : Philippe Cavallini – Usage pédagogique
     </footer>
   </div>
+
+  <script>
+    const utilisateur = "philippecavallini2-cloud";
+    const depot = "TP-Labo";
+    const urlApi = `https://github.com{utilisateur}/${depot}/contents/`;
+
+    fetch(urlApi)
+      .then(reponse => reponse.json())
+      .then(fichiers => {
+        const conteneur = document.getElementById("liste-ressources");
+        document.getElementById("loading").style.display = "none";
+
+        fichiers.forEach(fichier => {
+          const nom = fichier.name;
+          // Ignore les fichiers système et index.html
+          if (nom === "index.html" || nom.startsWith(".") || fichier.type !== "file") return;
+
+          const ext = nom.split('.').pop().toLowerCase();
+          // Nettoie le nom pour un affichage propre (enlève l'extension et remplace _ ou - par des espaces)
+          const titrePropre = nom.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
+          const lienEncode = encodeURIComponent(nom);
+
+          if (ext === "mp4" || ext === "webm") {
+            conteneur.innerHTML += `
+              <div class="video-box">
+                <span class="video-title">🎬 ${titrePropre}</span>
+                <video controls playsinline preload="metadata">
+                  <source src="${lienEncode}" type="video/${ext}">
+                  Votre navigateur ne supporte pas la lecture vidéo.
+                </video>
+              </div>
+            `;
+          } else if (ext === "pdf") {
+            conteneur.innerHTML += `
+              <a class="card" href="${lienEncode}" target="_blank">
+                <span class="card-title">📄 ${titrePropre}</span>
+                <span class="card-desc">Document PDF à consulter ou télécharger</span>
+              </a>
+            `;
+          } else if (["png", "jpg", "jpeg", "gif", "webp"].includes(ext)) {
+            conteneur.innerHTML += `
+              <a class="card" href="${lienEncode}" target="_blank">
+                <span class="card-title">🖼️ ${titrePropre}</span>
+                <span class="card-desc">Affiche / Image haute définition (${ext.toUpperCase()})</span>
+              </a>
+            `;
+          }
+        });
+      })
+      .catch(erreur => {
+        document.getElementById("loading").innerText = "Impossible de charger la liste automatiquement.";
+      });
+  </script>
 </body>
 </html>
