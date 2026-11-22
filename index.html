@@ -5,152 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ressources Labo & Physique-Chimie – P. Cavallini</title>
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #f4f6f9;
-      color: #1f2937;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-    }
-    .container {
-      max-width: 600px;
-      width: 100%;
-      background: #ffffff;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
-    h1 {
-      font-size: 1.4rem;
-      color: #0f4c81;
-      margin-top: 0;
-      border-bottom: 2px solid #e5e7eb;
-      padding-bottom: 10px;
-    }
-    p.subtitle {
-      font-size: 0.95rem;
-      color: #4b5563;
-      margin-bottom: 20px;
-    }
-    details.folder {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      margin-bottom: 14px;
-      padding: 12px 15px;
-    }
-    details.folder summary {
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: #0f4c81;
-      cursor: pointer;
-      list-style: none;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    details.folder summary::-webkit-details-marker {
-      display: none;
-    }
-    details.folder summary::after {
-      content: "▼";
-      font-size: 0.75rem;
-      transition: transform 0.2s;
-    }
-    details.folder[open] summary::after {
-      transform: rotate(180deg);
-    }
-    .folder-content {
-      margin-top: 14px;
-    }
-    .card {
-      display: block;
-      text-decoration: none;
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-left: 5px solid #0f4c81;
-      padding: 14px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      transition: transform 0.15s, background 0.15s;
-    }
-    .card:hover {
-      background: #eff6ff;
-      transform: translateY(-2px);
-    }
-    .card-app {
-      border-left-color: #7c3aed;
-    }
-    .card-app .card-title {
-      color: #6d28d9;
-    }
-    .card-title {
-      font-weight: 600;
-      color: #0f4c81;
-      font-size: 1rem;
-      display: block;
-      word-break: break-word;
-    }
-    .card-desc {
-      font-size: 0.85rem;
-      color: #64748b;
-      margin-top: 4px;
-      display: block;
-    }
-    .video-box {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-left: 5px solid #059669;
-      padding: 14px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-    }
-    .video-title {
-      font-weight: 600;
-      color: #059669;
-      font-size: 1rem;
-      display: block;
-      margin-bottom: 10px;
-      word-break: break-word;
-    }
-    video {
-      width: 100%;
-      border-radius: 6px;
-      background: #000;
-    }
-    #loading {
-      text-align: center;
-      color: #64748b;
-      padding: 15px;
-      font-style: italic;
-    }
-    footer {
-      margin-top: 25px;
-      text-align: center;
-      font-size: 0.8rem;
-      color: #9ca3af;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f6f9; color: #1f2937; margin: 0; padding: 20px; display: flex; justify-content: center; }
+    .container { max-width: 600px; width: 100%; background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+    h1 { font-size: 1.4rem; color: #0f4c81; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; }
+    p.subtitle { font-size: 0.95rem; color: #4b5563; margin-bottom: 20px; }
+    details.folder { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 10px; margin-bottom: 14px; padding: 12px 15px; }
+    details.folder summary { font-weight: 700; font-size: 1.05rem; color: #0f4c81; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; }
+    details.folder summary::-webkit-details-marker { display: none; }
+    details.folder summary::after { content: "▼"; font-size: 0.75rem; transition: transform 0.2s; }
+    details.folder[open] summary::after { transform: rotate(180deg); }
+    .folder-content { margin-top: 14px; }
+    .card { display: block; text-decoration: none; background: #ffffff; border: 1px solid #cbd5e1; border-left: 5px solid #0f4c81; padding: 14px; margin-bottom: 12px; border-radius: 8px; }
+    .card-app { border-left-color: #7c3aed; }
+    .card-app .card-title { color: #6d28d9; }
+    .card-title { font-weight: 600; color: #0f4c81; font-size: 1rem; display: block; word-break: break-word; }
+    .card-desc { font-size: 0.85rem; color: #64748b; margin-top: 4px; display: block; }
+    .video-box { background: #ffffff; border: 1px solid #cbd5e1; border-left: 5px solid #059669; padding: 14px; margin-bottom: 12px; border-radius: 8px; }
+    .video-title { font-weight: 600; color: #059669; font-size: 1rem; display: block; margin-bottom: 10px; word-break: break-word; }
+    video { width: 100%; border-radius: 6px; background: #000; }
+    #loading { text-align: center; color: #64748b; padding: 15px; font-style: italic; }
+    footer { margin-top: 25px; text-align: center; font-size: 0.8rem; color: #9ca3af; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🧪 Ressources Pédagogiques – Labo</h1>
     <p class="subtitle">Supports de TP, affiches, applications interactives et démonstrations vidéo.</p>
-
     <div id="loading">Chargement des dossiers...</div>
     <div id="liste-ressources"></div>
-
-    <footer>
-      Site personnel, non officiel – Conception : Philippe Cavallini – Usage pédagogique
-    </footer>
+    <footer>Site personnel, non officiel – Conception : Philippe Cavallini – Usage pédagogique</footer>
   </div>
 
   <script>
     const utilisateur = "philippecavallini2-cloud";
     const depot = "TP-Labo";
-    const urlArbre = `https://github.com{utilisateur}/${depot}/git/trees/main?recursive=1`;
+    const urlArbre = "https://github.com" + utilisateur + "/" + depot + "/git/trees/main?recursive=1";
 
     function creerCarte(cheminComplet, nomFichier) {
       if (nomFichier === "index.html" || nomFichier.startsWith(".")) return "";
@@ -159,32 +48,13 @@
       const urlEncodee = cheminComplet.split('/').map(encodeURIComponent).join('/');
 
       if (ext === "html" || ext === "htm") {
-        return `
-          <a class="card card-app" href="${urlEncodee}" target="_blank">
-            <span class="card-title">⚡ ${titrePropre}</span>
-            <span class="card-desc">Application interactive HTML à lancer</span>
-          </a>`;
+        return '<a class="card card-app" href="' + urlEncodee + '" target="_blank"><span class="card-title">⚡ ' + titrePropre + '</span><span class="card-desc">Application interactive HTML à lancer</span></a>';
       } else if (ext === "mp4" || ext === "webm") {
-        return `
-          <div class="video-box">
-            <span class="video-title">🎬 ${titrePropre}</span>
-            <video controls playsinline preload="metadata">
-              <source src="${urlEncodee}" type="video/${ext}">
-              Votre navigateur ne supporte pas la lecture vidéo.
-            </video>
-          </div>`;
+        return '<div class="video-box"><span class="video-title">🎬 ' + titrePropre + '</span><video controls playsinline preload="metadata"><source src="' + urlEncodee + '" type="video/' + ext + '"></video></div>';
       } else if (ext === "pdf") {
-        return `
-          <a class="card" href="${urlEncodee}" target="_blank">
-            <span class="card-title">📄 ${titrePropre}</span>
-            <span class="card-desc">Document PDF à consulter ou télécharger</span>
-          </a>`;
+        return '<a class="card" href="' + urlEncodee + '" target="_blank"><span class="card-title">📄 ' + titrePropre + '</span><span class="card-desc">Document PDF</span></a>';
       } else if (["png", "jpg", "jpeg", "gif", "webp"].includes(ext)) {
-        return `
-          <a class="card" href="${urlEncodee}" target="_blank">
-            <span class="card-title">🖼️ ${titrePropre}</span>
-            <span class="card-desc">Affiche / Image haute définition (${ext.toUpperCase()})</span>
-          </a>`;
+        return '<a class="card" href="' + urlEncodee + '" target="_blank"><span class="card-title">🖼️ ' + titrePropre + '</span><span class="card-desc">Affiche / Image (' + ext.toUpperCase() + ')</span></a>';
       }
       return "";
     }
@@ -192,18 +62,9 @@
     async function afficherPortail() {
       const conteneur = document.getElementById("liste-ressources");
       try {
-        let donnees;
-        const cleCache = `github_tree_${depot}`;
-        const cache = sessionStorage.getItem(cleCache);
-        if (cache) {
-          donnees = JSON.parse(cache);
-        } else {
-          const rep = await fetch(urlArbre);
-          if (!rep.ok) throw new Error("Erreur réseau");
-          donnees = await rep.json();
-          sessionStorage.setItem(cleCache, JSON.stringify(donnees));
-        }
-
+        const rep = await fetch(urlArbre);
+        if (!rep.ok) throw new Error("Erreur HTTP " + rep.status);
+        const donnees = await rep.json();
         document.getElementById("loading").style.display = "none";
 
         const dossiers = {};
@@ -222,40 +83,23 @@
           }
         });
 
-        // 1. Affiche automatiquement chaque dossier créé dans TP-Labo
         Object.keys(dossiers).sort().forEach(nomDossier => {
           let htmlDossier = "";
-          dossiers[nomDossier].forEach(f => {
-            htmlDossier += creerCarte(f.path, f.name);
-          });
+          dossiers[nomDossier].forEach(f => { htmlDossier += creerCarte(f.path, f.name); });
           if (htmlDossier) {
-            const titreDossier = nomDossier.replace(/[_-]/g, " ");
-            conteneur.innerHTML += `
-              <details class="folder">
-                <summary>📁 ${titreDossier}</summary>
-                <div class="folder-content">${htmlDossier}</div>
-              </details>`;
+            conteneur.innerHTML += '<details class="folder"><summary>📁 ' + nomDossier.replace(/[_-]/g, " ") + '</summary><div class="folder-content">' + htmlDossier + '</div></details>';
           }
         });
 
-        // 2. Regroupe les fichiers restés à la racine dans un dossier général
         let htmlRacine = "";
-        racine.forEach(f => {
-          htmlRacine += creerCarte(f.path, f.name);
-        });
+        racine.forEach(f => { htmlRacine += creerCarte(f.path, f.name); });
         if (htmlRacine) {
-          conteneur.innerHTML += `
-            <details class="folder">
-              <summary>📁 Affiches & Projets Labo</summary>
-              <div class="folder-content">${htmlRacine}</div>
-            </details>`;
+          conteneur.innerHTML += '<details class="folder"><summary>📁 Affiches & Projets Labo</summary><div class="folder-content">' + htmlRacine + '</div></details>';
         }
-
       } catch (e) {
-        document.getElementById("loading").innerText = "Actualisez la page dans quelques instants.";
+        document.getElementById("loading").innerText = "Erreur technique : " + e.message;
       }
     }
-
     afficherPortail();
   </script>
 </body>
