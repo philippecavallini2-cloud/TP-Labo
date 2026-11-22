@@ -80,6 +80,12 @@
       background: #eff6ff;
       transform: translateY(-2px);
     }
+    .card-app {
+      border-left-color: #7c3aed;
+    }
+    .card-app .card-title {
+      color: #6d28d9;
+    }
     .card-title {
       font-weight: 600;
       color: #0f4c81;
@@ -131,13 +137,13 @@
 <body>
   <div class="container">
     <h1>🧪 Ressources Pédagogiques – Labo</h1>
-    <p class="subtitle">Supports de TP, affiches et démonstrations vidéo.</p>
+    <p class="subtitle">Supports de TP, affiches, applications interactives et démonstrations vidéo.</p>
 
     <div id="loading">Chargement des dossiers...</div>
     <div id="liste-ressources"></div>
 
     <footer>
-      Conception : Philippe Cavallini – Usage pédagogique
+      Site personnel, non officiel – Conception : Philippe Cavallini – Usage pédagogique
     </footer>
   </div>
 
@@ -152,7 +158,13 @@
       const titrePropre = nomFichier.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
       const urlEncodee = cheminComplet.split('/').map(encodeURIComponent).join('/');
 
-      if (ext === "mp4" || ext === "webm") {
+      if (ext === "html" || ext === "htm") {
+        return `
+          <a class="card card-app" href="${urlEncodee}" target="_blank">
+            <span class="card-title">⚡ ${titrePropre}</span>
+            <span class="card-desc">Application interactive HTML à lancer</span>
+          </a>`;
+      } else if (ext === "mp4" || ext === "webm") {
         return `
           <div class="video-box">
             <span class="video-title">🎬 ${titrePropre}</span>
@@ -181,14 +193,15 @@
       const conteneur = document.getElementById("liste-ressources");
       try {
         let donnees;
-        const cache = sessionStorage.getItem("github_tree_cache");
+        const cleCache = `github_tree_${depot}`;
+        const cache = sessionStorage.getItem(cleCache);
         if (cache) {
           donnees = JSON.parse(cache);
         } else {
           const rep = await fetch(urlArbre);
           if (!rep.ok) throw new Error("Erreur réseau");
           donnees = await rep.json();
-          sessionStorage.setItem("github_tree_cache", JSON.stringify(donnees));
+          sessionStorage.setItem(cleCache, JSON.stringify(donnees));
         }
 
         document.getElementById("loading").style.display = "none";
@@ -209,7 +222,7 @@
           }
         });
 
-        // 1. Affiche automatiquement chaque dossier créé sur GitHub
+        // 1. Affiche automatiquement chaque dossier créé dans TP-Labo
         Object.keys(dossiers).sort().forEach(nomDossier => {
           let htmlDossier = "";
           dossiers[nomDossier].forEach(f => {
