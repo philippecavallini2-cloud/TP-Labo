@@ -74,7 +74,7 @@
           if (item.type !== "blob") return;
           const parties = item.path.split('/');
           if (parties.length > 1) {
-            const nomDossier = parties[0];
+            const [nomDossier] = parties;
             const nomFichier = parties[parties.length - 1];
             if (!dossiers[nomDossier]) dossiers[nomDossier] = [];
             dossiers[nomDossier].push({ path: item.path, name: nomFichier });
