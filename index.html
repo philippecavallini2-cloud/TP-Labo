@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ressources Labo & Physique-Chimie – P. Cavallini</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f6f9; color: #1f2937; margin: 0; padding: 20px; display: flex; justify-content: center; }
     .container { max-width: 600px; width: 100%; background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
@@ -15,21 +16,17 @@
     details.folder summary::after { content: "▼"; font-size: 0.75rem; transition: transform 0.2s; }
     details.folder[open] summary::after { transform: rotate(180deg); }
     .folder-content { margin-top: 14px; }
-    
     .item-wrapper { position: relative; margin-bottom: 12px; }
     .card { display: block; text-decoration: none; background: #ffffff; border: 1px solid #cbd5e1; border-left: 5px solid #0f4c81; padding: 14px 85px 14px 14px; border-radius: 8px; }
     .card-app { border-left-color: #7c3aed; }
     .card-app .card-title { color: #6d28d9; }
     .card-title { font-weight: 600; color: #0f4c81; font-size: 1rem; display: block; word-break: break-word; }
     .card-desc { font-size: 0.85rem; color: #64748b; margin-top: 4px; display: block; }
-    
     .video-box { background: #ffffff; border: 1px solid #cbd5e1; border-left: 5px solid #059669; padding: 14px; border-radius: 8px; }
     .video-title { font-weight: 600; color: #059669; font-size: 1rem; display: block; margin-bottom: 10px; padding-right: 75px; word-break: break-word; }
     video { width: 100%; border-radius: 6px; background: #000; }
-
     .btn-share { position: absolute; top: 12px; right: 12px; background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; font-size: 0.75rem; font-weight: 600; padding: 5px 8px; border-radius: 6px; cursor: pointer; z-index: 2; }
     .btn-share:hover { background: #e2e8f0; }
-
     #modal-qr { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); z-index: 100; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
     .modal-box { background: #ffffff; padding: 24px; border-radius: 14px; max-width: 340px; width: 100%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
     .modal-title { font-weight: 700; color: #0f4c81; font-size: 1.05rem; margin-bottom: 12px; word-break: break-word; }
@@ -39,7 +36,6 @@
     .btn-primary { background: #0f4c81; color: #fff; border: none; padding: 9px 12px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; flex: 1; min-width: 120px; }
     .btn-download { background: #059669; color: #fff; border: none; padding: 9px 12px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; flex: 1; min-width: 120px; }
     .btn-close { background: #e2e8f0; color: #1f2937; border: none; padding: 9px 14px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; width: 100%; }
-
     #loading { text-align: center; color: #64748b; padding: 15px; font-style: italic; word-break: break-word; }
     footer { margin-top: 25px; text-align: center; font-size: 0.8rem; color: #9ca3af; }
   </style>
@@ -66,7 +62,6 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
   <script>
     const utilisateur = "philippecavallini2-cloud";
     const depot = "TP-Labo";
@@ -124,7 +119,7 @@
       const titrePropre = nomFichier.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
       const titreEchappe = titrePropre.replace(/'/g, "\'");
       const urlEncodee = cheminComplet.split('/').map(encodeURIComponent).join('/');
-      const boutonQR = '<button class="btn-share" onclick="ouvrirQR('' + urlEncodee + '', '' + titreEchappe + '')">🔗 QR / Lien</button>';
+      const boutonQR = '<button class="btn-share" onclick="ouvrirQR(\'' + urlEncodee + '\', \'' + titreEchappe + '\')">🔗 QR / Lien</button>';
 
       if (ext === "html" || ext === "htm") {
         return '<div class="item-wrapper">' + boutonQR + '<a class="card card-app" href="' + urlEncodee + '" target="_blank"><span class="card-title">⚡ ' + titrePropre + '</span><span class="card-desc">Application interactive HTML à lancer</span></a></div>';
