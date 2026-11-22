@@ -69,7 +69,7 @@
 
         const dossiers = {};
         const racine = [];
-
+        const nomDossier = parties[0];
         donnees.tree.forEach(item => {
           if (item.type !== "blob") return;
           const parties = item.path.split('/');
