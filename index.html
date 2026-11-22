@@ -39,7 +39,6 @@
   <script>
     const utilisateur = "philippecavallini2-cloud";
     const depot = "TP-Labo";
-    // Correction 1 : URL valide vers l'API GitHub
     const urlArbre = "https://github.com" + utilisateur + "/" + depot + "/git/trees/main?recursive=1";
 
     function creerCarte(cheminComplet, nomFichier) {
@@ -70,7 +69,6 @@
 
         const dossiers = {};
         const racine = [];
-        // Correction 2 : Suppression de la ligne inutile "const nomDossier = parties[0];"
 
         donnees.tree.forEach(item => {
           if (item.type !== "blob") return;
