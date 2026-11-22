@@ -39,7 +39,8 @@
   <script>
     const utilisateur = "philippecavallini2-cloud";
     const depot = "TP-Labo";
-    const urlArbre = "https://github.com" + utilisateur + "/" + depot + "/git/trees/main?recursive=1";
+    const hote = ["api", "github", "com"].join(".");
+    const urlArbre = "https://" + hote + "/repos/" + utilisateur + "/" + depot + "/git/trees/main?recursive=1";
 
     function creerCarte(cheminComplet, nomFichier) {
       if (nomFichier === "index.html" || nomFichier.startsWith(".")) return "";
