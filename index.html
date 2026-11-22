@@ -23,7 +23,7 @@
     .video-box { background: #ffffff; border: 1px solid #cbd5e1; border-left: 5px solid #059669; padding: 14px; margin-bottom: 12px; border-radius: 8px; }
     .video-title { font-weight: 600; color: #059669; font-size: 1rem; display: block; margin-bottom: 10px; word-break: break-word; }
     video { width: 100%; border-radius: 6px; background: #000; }
-    #loading { text-align: center; color: #64748b; padding: 15px; font-style: italic; }
+    #loading { text-align: center; color: #64748b; padding: 15px; font-style: italic; word-break: break-word; }
     footer { margin-top: 25px; text-align: center; font-size: 0.8rem; color: #9ca3af; }
   </style>
 </head>
@@ -97,7 +97,7 @@
           conteneur.innerHTML += '<details class="folder"><summary>📁 Affiches & Projets Labo</summary><div class="folder-content">' + htmlRacine + '</div></details>';
         }
       } catch (e) {
-        document.getElementById("loading").innerText = "Erreur technique : " + e.message;
+        document.getElementById("loading").innerHTML = "Erreur : <b>" + e.name + "</b> - " + e.message + "<br><small>" + urlArbre + "</small>";
       }
     }
     afficherPortail();
