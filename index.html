@@ -16,26 +16,32 @@
     details.folder summary::after { content: "▼"; font-size: 0.75rem; transition: transform 0.2s; }
     details.folder[open] summary::after { transform: rotate(180deg); }
     .folder-content { margin-top: 14px; }
+    
     .item-wrapper { position: relative; margin-bottom: 12px; }
     .card { display: block; text-decoration: none; background: #ffffff; border: 1px solid #cbd5e1; border-left: 5px solid #0f4c81; padding: 14px 85px 14px 14px; border-radius: 8px; }
     .card-app { border-left-color: #7c3aed; }
     .card-app .card-title { color: #6d28d9; }
     .card-title { font-weight: 600; color: #0f4c81; font-size: 1rem; display: block; word-break: break-word; }
     .card-desc { font-size: 0.85rem; color: #64748b; margin-top: 4px; display: block; }
+    
     .video-box { background: #ffffff; border: 1px solid #cbd5e1; border-left: 5px solid #059669; padding: 14px; border-radius: 8px; }
     .video-title { font-weight: 600; color: #059669; font-size: 1rem; display: block; margin-bottom: 10px; padding-right: 75px; word-break: break-word; }
     video { width: 100%; border-radius: 6px; background: #000; }
+
     .btn-share { position: absolute; top: 12px; right: 12px; background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; font-size: 0.75rem; font-weight: 600; padding: 5px 8px; border-radius: 6px; cursor: pointer; z-index: 2; }
     .btn-share:hover { background: #e2e8f0; }
+
+    /* Fenêtre modale QR Code */
     #modal-qr { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); z-index: 100; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
     .modal-box { background: #ffffff; padding: 24px; border-radius: 14px; max-width: 340px; width: 100%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
     .modal-title { font-weight: 700; color: #0f4c81; font-size: 1.05rem; margin-bottom: 12px; word-break: break-word; }
-    #qr-canvas { width: 200px; height: 200px; margin: 10px auto; display: block; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; background: #fff; }
+    #qr-canvas { width: 200px; height: 200px; margin: 10px auto; display: block; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; }
     .modal-url { font-size: 0.75rem; color: #64748b; background: #f1f5f9; padding: 8px; border-radius: 6px; word-break: break-all; margin: 12px 0; }
     .modal-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
     .btn-primary { background: #0f4c81; color: #fff; border: none; padding: 9px 12px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; flex: 1; min-width: 120px; }
     .btn-download { background: #059669; color: #fff; border: none; padding: 9px 12px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; flex: 1; min-width: 120px; }
     .btn-close { background: #e2e8f0; color: #1f2937; border: none; padding: 9px 14px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; width: 100%; }
+
     #loading { text-align: center; color: #64748b; padding: 15px; font-style: italic; word-break: break-word; }
     footer { margin-top: 25px; text-align: center; font-size: 0.8rem; color: #9ca3af; }
   </style>
@@ -49,6 +55,7 @@
     <footer>Site personnel, non officiel – Conception : Philippe Cavallini – Usage pédagogique</footer>
   </div>
 
+  <!-- Fenêtre de partage QR / Lien -->
   <div id="modal-qr" onclick="if(event.target===this) fermerQR()">
     <div class="modal-box">
       <div class="modal-title" id="qr-titre"></div>
@@ -85,13 +92,13 @@
             element: document.getElementById("qr-canvas"),
             value: lienActuel,
             size: 400,
-            padding: 16
+            padding: 24,
+            background: "#ffffff",
+            foreground: "#000000"
           });
-        } else {
-          alert("Erreur : la bibliothèque QRious n'est pas chargée.");
         }
       } catch (err) {
-        alert("Erreur QR : " + err.message);
+        console.error(err);
       }
     }
 
@@ -108,38 +115,114 @@
     function telechargerQR() {
       const canvas = document.getElementById("qr-canvas");
       const lienTelechargement = document.createElement("a");
-      lienTelechargement.download = "QR_" + titreActuel.replace(/[^a-zA-Z0-9_-]/g, "_") + ".png";
+      const nomFichier = "QR_" + titreActuel.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9_-]/g, "_") + ".png";
+      lienTelechargement.download = nomFichier;
       lienTelechargement.href = canvas.toDataURL("image/png");
       lienTelechargement.click();
     }
 
-    function creerCarte(cheminComplet, nomFichier) {
-      if (nomFichier === "index.html" || nomFichier.startsWith(".")) return "";
+    function creerCarteElement(cheminComplet, nomFichier) {
+      if (nomFichier === "index.html" || nomFichier.startsWith(".")) return null;
       const ext = nomFichier.split('.').pop().toLowerCase();
       const titrePropre = nomFichier.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
-      const titreEchappe = titrePropre.replace(/'/g, "\'");
-      const urlEncodee = cheminComplet.split('/').map(encodeURIComponent).join('/');
-      const boutonQR = '<button class="btn-share" onclick="ouvrirQR(\'' + urlEncodee + '\', \'' + titreEchappe + '\')">🔗 QR / Lien</button>';
+      const urlEncodee = cheminComplet.split('/').map(s => encodeURIComponent(s).replace(/'/g, "%27")).join('/');
 
-      if (ext === "html" || ext === "htm") {
-        return '<div class="item-wrapper">' + boutonQR + '<a class="card card-app" href="' + urlEncodee + '" target="_blank"><span class="card-title">⚡ ' + titrePropre + '</span><span class="card-desc">Application interactive HTML à lancer</span></a></div>';
-      } else if (ext === "mp4" || ext === "webm") {
-        return '<div class="item-wrapper">' + boutonQR + '<div class="video-box"><span class="video-title">🎬 ' + titrePropre + '</span><video controls playsinline preload="metadata"><source src="' + urlEncodee + '" type="video/' + ext + '"></video></div></div>';
-      } else if (ext === "pdf") {
-        return '<div class="item-wrapper">' + boutonQR + '<a class="card" href="' + urlEncodee + '" target="_blank"><span class="card-title">📄 ' + titrePropre + '</span><span class="card-desc">Document PDF</span></a></div>';
-      } else if (["png", "jpg", "jpeg", "gif", "webp"].includes(ext)) {
-        return '<div class="item-wrapper">' + boutonQR + '<a class="card" href="' + urlEncodee + '" target="_blank"><span class="card-title">🖼️ ' + titrePropre + '</span><span class="card-desc">Affiche / Image (' + ext.toUpperCase() + ')</span></a></div>';
+      const typesValides = ["html", "htm", "mp4", "webm", "pdf", "png", "jpg", "jpeg", "gif", "webp"];
+      if (!typesValides.includes(ext)) return null;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "item-wrapper";
+
+      const btnShare = document.createElement("button");
+      btnShare.className = "btn-share";
+      btnShare.textContent = "🔗 QR / Lien";
+      btnShare.onclick = () => ouvrirQR(urlEncodee, titrePropre);
+      wrapper.appendChild(btnShare);
+
+      if (ext === "mp4" || ext === "webm") {
+        const videoBox = document.createElement("div");
+        videoBox.className = "video-box";
+
+        const videoTitle = document.createElement("span");
+        videoTitle.className = "video-title";
+        videoTitle.textContent = "🎬 " + titrePropre;
+
+        const video = document.createElement("video");
+        video.controls = true;
+        video.playsInline = true;
+        video.preload = "metadata";
+
+        const source = document.createElement("source");
+        source.src = urlEncodee;
+        source.type = "video/" + ext;
+
+        video.appendChild(source);
+        videoBox.appendChild(videoTitle);
+        videoBox.appendChild(video);
+        wrapper.appendChild(videoBox);
+      } else {
+        const link = document.createElement("a");
+        link.href = urlEncodee;
+        link.target = "_blank";
+
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "card-title";
+
+        const descSpan = document.createElement("span");
+        descSpan.className = "card-desc";
+
+        if (ext === "html" || ext === "htm") {
+          link.className = "card card-app";
+          titleSpan.textContent = "⚡ " + titrePropre;
+          descSpan.textContent = "Application interactive HTML à lancer";
+        } else if (ext === "pdf") {
+          link.className = "card";
+          titleSpan.textContent = "📄 " + titrePropre;
+          descSpan.textContent = "Document PDF";
+        } else {
+          link.className = "card";
+          titleSpan.textContent = "🖼️ " + titrePropre;
+          descSpan.textContent = "Affiche / Image (" + ext.toUpperCase() + ")";
+        }
+
+        link.appendChild(titleSpan);
+        link.appendChild(descSpan);
+        wrapper.appendChild(link);
       }
-      return "";
+
+      return wrapper;
+    }
+
+    function creerDossierElement(titreDossier, fichiers) {
+      const cartes = fichiers
+        .map(f => creerCarteElement(f.path, f.name))
+        .filter(el => el !== null);
+
+      if (cartes.length === 0) return null;
+
+      const details = document.createElement("details");
+      details.className = "folder";
+
+      const summary = document.createElement("summary");
+      summary.textContent = "📁 " + titreDossier;
+
+      const content = document.createElement("div");
+      content.className = "folder-content";
+      cartes.forEach(c => content.appendChild(c));
+
+      details.appendChild(summary);
+      details.appendChild(content);
+      return details;
     }
 
     async function afficherPortail() {
       const conteneur = document.getElementById("liste-ressources");
+      const loader = document.getElementById("loading");
       try {
         const rep = await fetch(urlArbre);
         if (!rep.ok) throw new Error("Erreur HTTP " + rep.status);
         const donnees = await rep.json();
-        document.getElementById("loading").style.display = "none";
+        loader.style.display = "none";
 
         const dossiers = {};
         const racine = [];
@@ -158,20 +241,20 @@
         });
 
         Object.keys(dossiers).sort().forEach(nomDossier => {
-          let htmlDossier = "";
-          dossiers[nomDossier].forEach(f => { htmlDossier += creerCarte(f.path, f.name); });
-          if (htmlDossier) {
-            conteneur.innerHTML += '<details class="folder"><summary>📁 ' + nomDossier.replace(/[_-]/g, " ") + '</summary><div class="folder-content">' + htmlDossier + '</div></details>';
-          }
+          const blocDossier = creerDossierElement(nomDossier.replace(/[_-]/g, " "), dossiers[nomDossier]);
+          if (blocDossier) conteneur.appendChild(blocDossier);
         });
 
-        let htmlRacine = "";
-        racine.forEach(f => { htmlRacine += creerCarte(f.path, f.name); });
-        if (htmlRacine) {
-          conteneur.innerHTML += '<details class="folder"><summary>📁 Affiches & Projets Labo</summary><div class="folder-content">' + htmlRacine + '</div></details>';
-        }
+        const blocRacine = creerDossierElement("Affiches & Projets Labo", racine);
+        if (blocRacine) conteneur.appendChild(blocRacine);
+
       } catch (e) {
-        document.getElementById("loading").innerHTML = "Erreur : <b>" + e.name + "</b> - " + e.message + "<br><small>" + urlArbre + "</small>";
+        loader.textContent = "";
+        const bold = document.createElement("b");
+        bold.textContent = e.name;
+        const small = document.createElement("small");
+        small.textContent = urlArbre;
+        loader.append("Erreur : ", bold, " - " + e.message, document.createElement("br"), small);
       }
     }
     afficherPortail();
